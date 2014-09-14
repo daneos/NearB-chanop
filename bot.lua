@@ -10,19 +10,21 @@ local bot = {
 		nick = "chanop",
 	}, 
 	server = "wiktor.ml",
-	channels = {
+	chans = {
 		announce = "#announce",
 		global = "#global",
 		debug = "#debug",
 	},
-	con		= nil,
+	con = nil,
+	ticks = 0,
+	tickmax = 10000,
 }
 
 function bot:init()
 -- start connection and initialize bot table
 	self.con = irc.new(self.userinfo)
 	self.con:connect(self.server)
-	for _,chan in pairs(self.channels) do
+	for _,chan in pairs(self.chans) do
 		self.con:join(chan)
 	end
 
@@ -35,14 +37,22 @@ end
 function bot:debug(message)
 -- print debug message
 	print(message)
-	self.con:sendNotice(self.channels.debug, message)
+	self:sendChat(self.chans.debug, message)
 end
 
 function bot:run()
 -- bot main loop
 	while true do
 		self.con:think()
-		sleep(0.5)
+		sleep(0.01)
+		self.ticks = self.ticks + 1
+
+		if self.ticks > self.tickmax then
+			self.ticks = 0
+			for _,chan in ipairs(self.chans) do
+				self:send("NAMES "..chan)
+			end
+		end
 	end
 end
 
