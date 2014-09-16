@@ -6,9 +6,7 @@ local bot = require "bot"
 
 local function locator(lat,lon)
 
---
-	local lengthofloc = 6
---
+	local lengthofloc = 6 -- cuz i'm lazy
 
 -- we add some degrees
 
@@ -17,17 +15,22 @@ local function locator(lat,lon)
 
 -- to fix the coords
 
+-- Failsafe stuff
+
+if (lon < 0 or lon > 360 or lat < 0 or lat > 180) then
+
+	return nil -- would be very greatful if you test it properly.
+
+else
+
 	local qth = {}
 
 	qth[1] = string.char( string.byte("A") + math.floor(lon / 20) )
 	qth[2] = string.char( string.byte("A") + math.floor(lat / 10) )
-
 	qth[3] = string.char( string.byte("0") + math.floor((lon % 20)/2))
 	qth[4] = string.char( string.byte("0") + math.floor((lat % 10)/1))
-
 	qth[5] = string.char( string.byte("A") + math.floor( 12 * (x-2*math.floor(x/2)) )
 	qth[6] = string.char( string.byte("A") + math.floor( 24 * (x - math.floor(x)) )
-
 
 -- TODO: code another level of qth locator, smaller than 3rd one.
 
@@ -56,7 +59,7 @@ local hooks = {
 			bot:debug("["..channel.."] "..user.nick..": KEY="..key.." LAT="..lat.." LON="..lon.." ACTION="..action.." PASS="..pass)
 			if action == "CONNECT" then
 				if auth(user.nick, key, pass) then
-					loc = "#"..locator(lat, lon)
+					loc = "#"..locator(lat, lon) -- I'd suggest to handle nil returned by locator and throw error because of false coordinates (impossible ones)
 					bot:join(loc)
 					bot:sendChat(bot.chans.announce, user.nick..":JOIN "..loc)
 					table.insert(bot.chans, loc)
