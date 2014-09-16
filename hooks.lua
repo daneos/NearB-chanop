@@ -48,18 +48,25 @@ end
 local hooks = {
 	["OnChat"] = function(user, channel, message)
 		bot:sendChat(bot.chans.global, "["..channel.."] "..user.nick..": "..message)
-		
+
+		-- announce	channel
 		if channel == bot.chans.announce then
 			local key,lat,lon,action,pass = message:match("%[(%x+)%@(%d+%.%d+%u)(%d+%.%d+%u)%](%u+) (.+)")
 			if not key or not lat or not lon or not action or not pass then
 				bot:sendChat(bot.chans.announce, user.nick..":SYNTAX ERROR")
 				bot:debug("Syntax error on "..channel.." from "..user.nick)
 				return
-			end 
+			end
 			bot:debug("["..channel.."] "..user.nick..": KEY="..key.." LAT="..lat.." LON="..lon.." ACTION="..action.." PASS="..pass)
 			if action == "CONNECT" then
 				if auth(user.nick, key, pass) then
-					loc = "#"..locator(lat, lon) -- I'd suggest to handle nil returned by locator and throw error because of false coordinates (impossible ones)
+					loc = locator(lat, lon)
+					if not loc then
+						bot:sendChat(bot.chans.announce, user.nick..":INVALID LOCATION")
+						bot:debug("Invalid location on "..channel.." from "..user.nick)
+						return
+					end
+					loc = "#"..loc
 					bot:join(loc)
 					bot:sendChat(bot.chans.announce, user.nick..":JOIN "..loc)
 					table.insert(bot.chans, loc)
@@ -70,6 +77,7 @@ local hooks = {
 			end		
 		end
 		
+		-- debug channel
 		if channel == bot.chans.debug then
 			if message == "quit" then
 				bot:debug("Shutting down...")
