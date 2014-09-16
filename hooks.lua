@@ -19,7 +19,7 @@ local hooks = {
 		bot:sendChat(bot.chans.global, "["..channel.."] "..user.nick..": "..message)
 		
 		if channel == bot.chans.announce then
-			local key,lat,lon,action,pass = message:match("%[(%x+)%@(%d+%.%d+%u)(%d+%.%d+%u)%](%u+) (.+)")
+			local key,lat,lon,action,pass = message:match("^%[(%x+)%@(%d+%.%d+%u)(%d+%.%d+%u)%](%u+) (.+)$")
 			if not key or not lat or not lon or not action or not pass then
 				bot:sendChat(bot.chans.announce, user.nick..":SYNTAX ERROR")
 				bot:debug("Syntax error on "..channel.." from "..user.nick)
@@ -40,13 +40,19 @@ local hooks = {
 		end
 		
 		if channel == bot.chans.debug then
-			if message == "quit" then
+			local cmd,param = message:match("(.+)%s?(.*)")
+			if cmd == "quit" then
 				bot:debug("Shutting down...")
 				bot:disconnect("Shutting down...")
 				os.exit()
-			elseif message == "rehook" then
-				bot:debug("Reloading hooks...")
-				bot:reloadHooks("hooks.lua")
+			elseif cmd == "rehook" then
+				if param == "" then
+					bot:debug("Reloading hooks from default...")
+					bot:reloadHooks("hooks.lua")
+				else
+					bot:debug("Reloading hooks from ["..param.."]...")
+					bot:reloadHooks(param)
+				end
 			end
 		end
 	end
