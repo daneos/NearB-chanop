@@ -5,31 +5,43 @@
 local bot = require "bot"
 
 local function locator(lat,lon)
+
 	local lengthofloc = 6 -- cuz i'm lazy
-	-- we add some degrees
-	lon = lon + 180
-	lat = lat + 90
+	-- we explode our latitude and longitude
+	latitude = tonumber(string.match(lat, '%d+%.%d+'))
+	longitude = tonumber(string.match(lon, '%d+%.%d+'))
+	-- then negate if necessary
+	if string.find(lat, "S") then
+		latitude = -latitude
+	end
+	if string.find(lon, "W") then
+		longitude = -longitude
+	end
+	-- and we add some degrees to that
+	longitude = longitude + 180
+	latitude = latitude + 90
 	-- to fix the coords
 	-- Failsafe stuff
-	if (lon < 0 or lon > 360 or lat < 0 or lat > 180) then
+	if (longitude < 0 or longitude > 360 or latitude < 0 or latitude > 180) then
 		return nil -- would be very greatful if you test it properly.
 	else
 		local qth = {}
 
-		qth[1] = string.char( string.byte("A") + math.floor(lon / 20) )
-		qth[2] = string.char( string.byte("A") + math.floor(lat / 10) )
-		qth[3] = string.char( string.byte("0") + math.floor((lon % 20)/2))
-		qth[4] = string.char( string.byte("0") + math.floor((lat % 10)/1))
-		qth[5] = string.char( string.byte("A") + math.floor( 12 * (lon-2*math.floor(lon/2)	)	)	)
-		qth[6] = string.char( string.byte("A") + math.floor( 24 * (lat - math.floor(lat)	)	)	)
+		qth[1] = string.char( string.byte("A") + math.floor(longitude / 20) )
+		qth[2] = string.char( string.byte("A") + math.floor(latitude / 10) )
+		qth[3] = string.char( string.byte("0") + math.floor((longitude % 20)/2))
+		qth[4] = string.char( string.byte("0") + math.floor((latitude % 10)/1))
+		qth[5] = string.char( string.byte("A") + math.floor( 12 * (longitude-2*math.floor(longitude/2)	)	)	)
+		qth[6] = string.char( string.byte("A") + math.floor( 24 * (latitude - math.floor(latitude)	)	)	)
 
 		-- TODO: code another level of qth locator, smaller than 3rd one.
 
 		local loc = qth[1]
-		for i=2,lengthofloc do loc = (loc .. qth[i]) end
-		-- here
+		for i=2,lengthofloc do 
+			loc = (loc .. qth[i]) 
+		end
 		return loc
-		-- or here should be the missing 'end'
+	end
 end
 
 local function auth(nick, key, pass)
