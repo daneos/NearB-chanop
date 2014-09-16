@@ -29,8 +29,8 @@ else
 	qth[2] = string.char( string.byte("A") + math.floor(lat / 10) )
 	qth[3] = string.char( string.byte("0") + math.floor((lon % 20)/2))
 	qth[4] = string.char( string.byte("0") + math.floor((lat % 10)/1))
-	qth[5] = string.char( string.byte("A") + math.floor( 12 * (x-2*math.floor(x/2)) )
-	qth[6] = string.char( string.byte("A") + math.floor( 24 * (x - math.floor(x)) )
+	qth[5] = string.char( string.byte("A") + math.floor( 12 * (lon-2*math.floor(lon/2)	)	)	)
+	qth[6] = string.char( string.byte("A") + math.floor( 24 * (lat - math.floor(lat)	)	)	)
 
 -- TODO: code another level of qth locator, smaller than 3rd one.
 
