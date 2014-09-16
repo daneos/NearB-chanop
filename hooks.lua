@@ -5,8 +5,38 @@
 local bot = require "bot"
 
 local function locator(lat,lon)
--- this is only dummy function
-	return "JO72AX"
+
+--
+	local lengthofloc = 6
+--
+
+-- we add some degrees
+
+	lon = lon + 180
+	lat = lat + 90
+
+-- to fix the coords
+
+	local qth = {}
+
+	qth[1] = string.char( string.byte("A") + math.floor(lon / 20) )
+	qth[2] = string.char( string.byte("A") + math.floor(lat / 10) )
+
+	qth[3] = string.char( string.byte("0") + math.floor((lon % 20)/2))
+	qth[4] = string.char( string.byte("0") + math.floor((lat % 10)/1))
+
+	qth[5] = string.char( string.byte("A") + math.floor( (lon - (math.floor(lon/2)*2)) / (5/60)))
+	qth[6] = string.char( string.byte("A") + math.floor( (lat - (math.floor(lat/1)*1)) / (2.5/60)))
+
+
+-- Above is some discrete shit (floor of floor or roof of longitude and latitude - but it's half past four when i write this code.
+-- I'll figure what should it be later. Seriously ;) If you see that and it's not fixed, write me an issue
+-- TODO: refactor countings, code another level of qth locator, smaller than 3rd one.
+
+	local loc = qth[1]
+	for i=2,lengthofloc do loc = (loc .. qth[i]) end
+
+	return loc
 end
 
 local function auth(nick, key, pass)
