@@ -5,39 +5,31 @@
 local bot = require "bot"
 
 local function locator(lat,lon)
-
 	local lengthofloc = 6 -- cuz i'm lazy
-
--- we add some degrees
-
+	-- we add some degrees
 	lon = lon + 180
 	lat = lat + 90
+	-- to fix the coords
+	-- Failsafe stuff
+	if (lon < 0 or lon > 360 or lat < 0 or lat > 180) then
+		return nil -- would be very greatful if you test it properly.
+	else
+		local qth = {}
 
--- to fix the coords
+		qth[1] = string.char( string.byte("A") + math.floor(lon / 20) )
+		qth[2] = string.char( string.byte("A") + math.floor(lat / 10) )
+		qth[3] = string.char( string.byte("0") + math.floor((lon % 20)/2))
+		qth[4] = string.char( string.byte("0") + math.floor((lat % 10)/1))
+		qth[5] = string.char( string.byte("A") + math.floor( 12 * (lon-2*math.floor(lon/2)	)	)	)
+		qth[6] = string.char( string.byte("A") + math.floor( 24 * (lat - math.floor(lat)	)	)	)
 
--- Failsafe stuff
+		-- TODO: code another level of qth locator, smaller than 3rd one.
 
-if (lon < 0 or lon > 360 or lat < 0 or lat > 180) then
-
-	return nil -- would be very greatful if you test it properly.
-
-else
-
-	local qth = {}
-
-	qth[1] = string.char( string.byte("A") + math.floor(lon / 20) )
-	qth[2] = string.char( string.byte("A") + math.floor(lat / 10) )
-	qth[3] = string.char( string.byte("0") + math.floor((lon % 20)/2))
-	qth[4] = string.char( string.byte("0") + math.floor((lat % 10)/1))
-	qth[5] = string.char( string.byte("A") + math.floor( 12 * (lon-2*math.floor(lon/2)	)	)	)
-	qth[6] = string.char( string.byte("A") + math.floor( 24 * (lat - math.floor(lat)	)	)	)
-
--- TODO: code another level of qth locator, smaller than 3rd one.
-
-	local loc = qth[1]
-	for i=2,lengthofloc do loc = (loc .. qth[i]) end
-
-	return loc
+		local loc = qth[1]
+		for i=2,lengthofloc do loc = (loc .. qth[i]) end
+		-- here
+		return loc
+		-- or here should be the missing 'end'
 end
 
 local function auth(nick, key, pass)
