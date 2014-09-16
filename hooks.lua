@@ -26,17 +26,17 @@ local function locator(lat,lon)
 		return nil -- would be very greatful if you test it properly.
 	else
 		local qth = {}
+		local k = ( 12 * (longitude-2*math.floor(longitude/2)))	-- I have to
+		local l = ( 24 * (latitude - math.floor(latitude))) 		-- help myself a bit
  
 		qth[1] = string.char( string.byte("A") + math.floor(longitude / 20) )
 		qth[2] = string.char( string.byte("A") + math.floor(latitude / 10) )
 		qth[3] = string.char( string.byte("0") + math.floor((longitude % 20)/2))
 		qth[4] = string.char( string.byte("0") + math.floor((latitude % 10)/1))
-		qth[5] = string.char( string.byte("A") + math.floor( 24 * (select(2,math.modf(longitude)))))
-		qth[6] = string.char( string.byte("A") + math.floor( 24 * (select(2,math.modf(latitude)))))
-		qth[7] = string.char( string.byte("0") + math.floor( 10 * (select(2,math.modf( 24 * (select(2,math.modf(longitude))))))))
-		qth[8] = string.char( string.byte("0") + math.floor( 10 * (select(2,math.modf( 24 * (select(2,math.modf(latitude))))))))
-
-		-- TODO: code another level of qth locator, smaller than 3rd one.
+		qth[5] = string.char( string.byte("A") + math.floor(k))
+		qth[6] = string.char( string.byte("A") + math.floor(l))
+		qth[7] = string.char( string.byte("0") + math.floor(10 * (k - math.floor(k) )))
+		qth[8] = string.char( string.byte("0") + math.floor(10 * (l - math.floor(l) )))
 
 		local loc = qth[1]
 		for i=2,lengthofloc do 
