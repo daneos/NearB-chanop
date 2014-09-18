@@ -23,6 +23,7 @@ local hooks = {
 			if not key or not lat or not lon or not action or not pass then
 				bot:sendChat(bot.chans.announce, user.nick..":SYNTAX ERROR")
 				bot:debug("Syntax error on "..channel.." from "..user.nick)
+				bot:query("Syntax error", user.nick)
 				return
 			end 
 			bot:debug("["..channel.."] "..user.nick..": KEY="..key.." LAT="..lat.." LON="..lon.." ACTION="..action.." PASS="..pass)
@@ -31,10 +32,12 @@ local hooks = {
 					loc = "#"..locator(lat, lon)
 					bot:join(loc)
 					bot:sendChat(bot.chans.announce, user.nick..":JOIN "..loc)
+					bot:query("Authorization successful", user.nick)
 					table.insert(bot.chans, loc)
 				else
 					bot:sendChat(bot.chans.announce, user.nick..":"..key.." UNAUTHORIZED")
 					bot:debug("Authorization error for "..user.nick..", key "..key)
+					bot:query("Authorization unsuccessful", user.nick)
 				end
 			end		
 		end

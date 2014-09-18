@@ -42,6 +42,13 @@ function bot:debug(message)
 	self:sendChat(self.chans.debug, message)
 end
 
+function bot:query(message, user)
+-- print query sent
+	print("Sent error via query to " .. user .. " - " .. message)
+	self:sendChat(self.chans.debug, "Error query sent to " ..user) -- debug
+	self:sendChat(user, message) -- query
+end
+
 function bot:run()
 -- bot main loop
 	while true do
