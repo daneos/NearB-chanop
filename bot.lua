@@ -49,12 +49,12 @@ function bot:run()
 		sleep(0.01)
 		self.ticks = self.ticks + 1
 
-		if self.ticks > self.tickmax then
+		--[[if self.ticks > self.tickmax then
 			self.ticks = 0
 			for _,chan in ipairs(self.chans) do
 				self:send("NAMES "..chan)
 			end
-		end
+		end]]--
 	end
 end
 
