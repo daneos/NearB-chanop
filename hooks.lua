@@ -53,25 +53,19 @@ local hooks = {
 				if not key or not pass then
 					bot:sendChat(user.nick, user.nick..":SYNTAX ERROR")
 					bot:debug("Syntax error on /query from "..user.nick)
-					auth_queue[user.nick] = nil
-					return
-				end
-				if key ~= data.key then
+				elseif key ~= data.key then
 					bot:sendChat(user.nick, key..":INVALID KEY")
 					bot:debug("Invalid key ["..key.."] from "..user.nick.." (should be ["..data.key.."])")
-					auth_queue[user.nick] = nil
-					return
-				end
-				if auth(user.nick, key, pass) then
+				elseif auth(user.nick, key, pass) then
 					loc = "#"..locator(data.lat, data.lon)
 					bot:join(loc)
-					bot:sendChat(user.nick, key..":JOIN "..loc)
 					table.insert(bot.chans, loc)
+					-- set channel "invite only" and send invite
+					bot:setMode({target=loc, add="i"})
+					bot:send("INVITE "..user.nick.." "..loc)
 				else
 					bot:sendChat(user.nick, user.nick..":"..key.." UNAUTHORIZED")
 					bot:debug("Authorization error for "..user.nick..", key "..key)
-					auth_queue[user.nick] = nil
-					return
 				end
 				auth_queue[user.nick] = nil
 			else
@@ -79,7 +73,11 @@ local hooks = {
 				bot:debug("Illegal /query from "..user.nick)
 			end
 		end
-	end
+	end,
+
+	["OnNotice"] = function(user, channel, message)
+		bot:debug("NOTICE: ["..channel.."] "..user.nick..": "..message)
+	end,
 }
 
 return hooks
