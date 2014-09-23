@@ -26,7 +26,7 @@ local registered = {}
 
 local hooks = {
 	["OnChat"] = function(user, channel, message)
-		bot:sendChat(bot.chans.global, "["..channel.."] "..user.nick..": "..message)
+		--bot:sendChat(bot.chans.global, "["..channel.."] "..user.nick..": "..message)
 		
 		if channel == bot.chans.announce then
 			local key,action,param = message:match("^(%x+):(%u+)%s?%[?(.-)%]?$")

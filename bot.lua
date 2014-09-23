@@ -14,7 +14,7 @@ local bot = {
 	server = "wiktor.ml",
 	chans = {
 		announce = "#announce",
-		global = "#global",
+		--global = "#global",
 		debug = "#debug",
 	},
 	con = nil,
