@@ -76,7 +76,12 @@ local hooks = {
 	end,
 
 	["OnNotice"] = function(user, channel, message)
-		bot:debug("NOTICE: ["..channel.."] "..user.nick..": "..message)
+		bot:debug("NOTICE: ["..channel.."]: "..message)
+	end,
+
+	["OnRaw"] = function(message)
+		print("RAW: "..message)
+		return nil
 	end,
 }
 
