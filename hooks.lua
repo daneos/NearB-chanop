@@ -3,11 +3,7 @@
 -- Released under the MIT license. See LICENSE for details
 
 local bot = require "bot"
-
-local function locator(lat,lon)
--- this is only dummy function
-	return "JO72AX"
-end
+local locator = require "locator"
 
 local function auth(nick, key, pass)
 -- this is only dummy function
@@ -19,7 +15,8 @@ local auth_queue = {}
 local hooks = {
 	["OnChat"] = function(user, channel, message)
 		bot:sendChat(bot.chans.global, "["..channel.."] "..user.nick..": "..message)
-		
+
+		-- announce	channel
 		if channel == bot.chans.announce then
 			local key,lat,lon,action = message:match("^%[(%x+)%@(%d+%.%d+%u)(%d+%.%d+%u)%](%u+)$")
 			if not key or not lat or not lon or not action then
@@ -34,6 +31,7 @@ local hooks = {
 			end		
 		end
 		
+		-- debug channel
 		if channel == bot.chans.debug then
 			local cmd,param = message:match("^(%w+)%s?(.*)$")
 			if cmd == "quit" then
