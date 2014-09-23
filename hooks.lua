@@ -49,7 +49,13 @@ local hooks = {
 				end
 				local data = registered[user.nick]
 				if data then
-					local loc = "#"..locator(lat,lon)
+					local loc = locator(lat,lon)
+					if not loc then
+						bot:sendChat(bot.chans.announce, user.nick..":INVALID LOCATION")
+						bot:debug("Invalid location on "..channel.." from "..user.nick)
+						return
+					end
+					loc = "#"..loc
 					if data.channel then
 						if data.channel == loc then
 							bot:sendChat(bot.chans.announce, user.nick..":NO CHANGES")
