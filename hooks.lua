@@ -35,7 +35,7 @@ local hooks = {
 		end
 		
 		if channel == bot.chans.debug then
-			local cmd,param = message:match("(.+)%s?(.*)")
+			local cmd,param = message:match("^(%w+)%s?(.*)$")
 			if cmd == "quit" then
 				bot:debug("Shutting down...")
 				bot:disconnect("Shutting down...")
@@ -48,6 +48,9 @@ local hooks = {
 					bot:debug("Reloading hooks from ["..param.."]...")
 					bot:reloadHooks(param)
 				end
+			elseif cmd == "irc" then
+				if not param then return end
+				bot:send(param)
 			end
 		end
 
