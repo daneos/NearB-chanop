@@ -26,7 +26,6 @@ local registered = {}
 
 local hooks = {
 	["OnChat"] = function(user, channel, message)
-		--bot:sendChat(bot.chans.global, "["..channel.."] "..user.nick..": "..message)
 		
 		if channel == bot.chans.announce then
 			local key,action,param = message:match("^(%x+):(%u+)%s?%[?(.-)%]?$")
@@ -49,6 +48,12 @@ local hooks = {
 				end
 				local data = registered[user.nick]
 				if data then
+					if key ~= data.key then
+						bot:sendChat(bot.chans.announce, user.nick..":KEY DIFFERS")
+						bot:debug("Different key on "..channel.." from "..user.nick)
+						registered[user.nick] = nil
+						return
+					end
 					local loc = locator(lat,lon)
 					if not loc then
 						bot:sendChat(bot.chans.announce, user.nick..":INVALID LOCATION")
@@ -60,6 +65,8 @@ local hooks = {
 						if data.channel == loc then
 							bot:sendChat(bot.chans.announce, user.nick..":NO CHANGES")
 							return
+						else
+							bot:send("KICK "..data.channel.." "..user.nick.." :CHANNEL CHANGE")
 						end
 					end
 					if not channel_exists(loc) then
