@@ -137,7 +137,46 @@ local hooks = {
 
 	["OnRaw"] = function(message)
 		print("RAW: "..message)
+		local code = message:match("^%:.-%s(%d+)%s?.*$")
+
+		-- /names response handling
+		if code == "353" then
+			local channel,users = message:match("^%:.-%s%d+%s.-%s%=%s(%#.-)%s%:(.*)")
+			if channel ~= bot.chans.announce and channel ~= bot.chans.debug then
+				if users == bot.userinfo.nick or users == "@"..bot.userinfo.nick then
+					-- check if any user should be on that channel
+					for user,data in pairs(registered) do
+						if data.channel == channel then return nil end
+					end
+					-- if not, part and remove
+					bot:part(channel)
+					for i,chan in ipairs(bot.chans) do
+						if chan == channel then
+							bot.chans[i] = nil
+							bot:debug("Removed empty channel "..chan)
+						end
+					end
+				end
+			end
+		end
 		return nil
+	end,
+
+	["OnPart"] = function(user, channel)
+		if registered[user.nick] then
+			if registered[user.nick].channel == channel then
+				bot:debug(user.nick.." parted "..channel)
+				registered[user.nick].channel = nil
+			else
+				bot:debug("Unexpected error: "..user.nick.." parted "..channel.." while should be on "..registered[user.nick].channel)
+				registered[user.nick] = nil
+			end
+		end
+	end,
+
+	["OnQuit"] = function(user, message)
+		bot:debug(user.nick.." quit ("..message..")")
+		registered[user.nick] = nil
 	end,
 }
 
